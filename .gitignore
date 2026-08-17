@@ -1,0 +1,47 @@
+# --- Unreal Engine generated/derived folders (fateElixer/ and any plugins) ---
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+Plugins/*/Binaries/
+Plugins/*/Build/
+Plugins/*/Intermediate/
+
+# Built data for maps
+*_BuiltData.uasset
+
+# --- IDE / editor generated ---
+.vs/
+.vscode/
+.idea/
+*.opensdf
+*.sdf
+*.sln
+*.suo
+*.VC.db
+*.VC.VC.opendb
+*.xcodeproj
+*.xcworkspace
+
+# --- Compiled objects (defensive, in case any C++ tooling drops these outside Intermediate/) ---
+*.slo
+*.lo
+*.o
+*.obj
+*.gch
+*.pch
+*.so
+*.dylib
+*.dll
+*.lai
+*.la
+*.a
+*.lib
+*.exe
+*.out
+*.app
+
+# --- OS generated ---
+.DS_Store
+Thumbs.db
