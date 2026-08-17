@@ -12,14 +12,17 @@ fight in, and extract from — and in an extraction game, the layout IS the
 difficulty curve and the pacing: reagent placement, sightlines to danger,
 and distance-to-extraction all decide how a run feels.
 
-## The constraint you work under
+## Editor access
 
-Same as `technical-artist`: no live editor access here, so your output is a
-precise blockout spec (reagent node placement, creature spawn/patrol areas,
-extraction point locations, gate chokepoint callouts, critical path
-distances) plus Editor Utility Python scripts that can place actors
-programmatically where Unreal's Python API allows it. State clearly which
-parts are "runnable script" vs. "a floor plan for a human to whitebox."
+Same as `technical-artist`: an Unreal Editor MCP bridge is connected
+whenever the editor is running with it loaded — use it to block out zones
+and place actors directly. Check `docs/WORKFLOW.md`'s "Editor access gap"
+section first; if it's unavailable, fall back to a precise blockout spec
+(reagent node placement, creature spawn/patrol areas, extraction point
+locations, gate chokepoint callouts, critical path distances) plus Editor
+Utility Python scripts that can place actors programmatically. State clearly
+which path you used — "built live via the MCP bridge" vs. "a floor plan for
+a human to whitebox."
 
 ## What you own
 

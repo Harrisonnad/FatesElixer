@@ -12,15 +12,18 @@ mid-run — players need to instantly understand threat level, extraction
 timing, what they're carrying, and which gates they can currently pass,
 without reading text mid-fight.
 
-## The constraint you work under
+## Editor access
 
-This environment cannot open the Unreal Editor, drag Blueprint nodes, or
-paint a Niagara graph — those are binary assets. Your deliverables are:
-Editor Utility Widget/Python scripts (Unreal's Python API can create/modify
-many asset types headlessly — use it where you can), precise specs a human
-implements in-editor in minutes instead of guessing, and any HLSL/material
-expression logic that can be expressed as text. Always say plainly which of
-your outputs are "ready to run" vs. "a spec for a human to build" — never
+An Unreal Editor MCP bridge is connected (Epic's official `ModelContextProtocol`
+plugin, UE 5.8) whenever the editor is running with it loaded — use it to
+build UMG widgets, Niagara systems, and materials directly rather than only
+producing specs. Check `docs/WORKFLOW.md`'s "Editor access gap" section
+first; if the bridge is unavailable (editor closed, needs a restart), fall
+back to: Editor Utility Widget/Python scripts (Unreal's Python API can
+create/modify many asset types headlessly), precise specs a human implements
+in-editor in minutes, and any HLSL/material expression logic expressed as
+text. Always say plainly which path you used for a given deliverable —
+"built live via the MCP bridge" vs. "a spec for a human to build" — never
 imply you've produced a finished in-editor asset you haven't.
 
 ## The asset reality you design within

@@ -1,7 +1,7 @@
 # Project: Elixir — Fate's Elixer
 
 ## What this is
-A 4-player PvE co-op extraction game built in **Unreal Engine 5.5.4**, co-op
+A 4-player PvE co-op extraction game built in **Unreal Engine 5.8**, co-op
 from day one (no single-player-first phase), where alchemy is the
 progression system: potions aren't just buffs, they're keys. Every
 meaningful brew unlocks something that was previously closed — a zone, a
@@ -68,16 +68,21 @@ them hard gates:
 
 ## Engine reality check (read this before assuming an agent can do something)
 
-This environment can read/write text and run shell commands (C++, `.uproject`
-config, Python Editor Scripting, Blueprint-as-text where applicable, docs,
-build scripts). It **cannot** click around the live Unreal Editor, drag nodes
-in a Blueprint graph, or paint a level viewport — those are binary
-`.uasset`/`.umap` files with no text diff. Until an Unreal Editor MCP bridge
-is connected (none is wired up yet — see `docs/WORKFLOW.md` §"Editor access
-gap"), `technical-artist` and `level-designer` produce **specs, C++
-scaffolding, Editor Utility Python scripts, and DataTable/CSV content** that
-a human (or a future editor-connected agent) applies inside the Unreal
-Editor — they do not claim to have built the actual Blueprint/level asset.
+An Unreal Editor MCP bridge **is now configured** — Epic's official
+`ModelContextProtocol` plugin (Experimental, ships with UE 5.8), enabled in
+`fateElixer.uproject`. It binds to `http://127.0.0.1:8000/mcp` and is
+registered as an MCP server in this Claude Code project (local scope). It
+only works while the **Unreal Editor is actually running** with the plugin
+loaded — if MCP tool calls to it fail, the editor either isn't open or
+needs restarting after a plugin/config change. See `docs/WORKFLOW.md`
+§"Editor access gap" for what to do when it's unavailable.
+
+With the bridge live, `technical-artist` and `level-designer` (and whoever
+is acting as `gameplay-programmer`) can drive the editor directly — spawn
+actors, edit Blueprints, build levels — instead of only producing specs for
+a human to apply. This environment can also always read/write text and run
+shell commands (C++, `.uproject` config, Python Editor Scripting, build
+scripts) regardless of bridge availability.
 
 ## Definition of done for a story
 

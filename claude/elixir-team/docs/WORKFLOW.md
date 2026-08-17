@@ -162,14 +162,25 @@ You can also invoke any specialist directly for a narrow task (e.g. "have
 `producer` — the full six-step gate chain is for phase-level story work,
 not every small ask.
 
-## Editor access gap (read before assuming an agent "built" something)
+## Editor access gap (read this before assuming an agent "built" something)
 
-No Unreal Editor MCP/automation bridge is connected in this setup — the
-MCP connector registry currently has nothing for Unreal Engine. That means
-`technical-artist` and `level-designer` cannot open the live Editor to place
-actors, drag Blueprint nodes, or paint a Niagara graph (those are binary
-`.uasset`/`.umap` files, not text). What they produce instead:
+**As of 2026-08-17, an Unreal Editor MCP bridge is connected** — Epic's
+official `ModelContextProtocol` plugin (Experimental, ships with UE 5.8),
+enabled in `fateElixer.uproject` and registered as an MCP server
+(`http://127.0.0.1:8000/mcp`, local scope) in this Claude Code project.
+`technical-artist` and `level-designer` can now place actors, edit
+Blueprints, and build levels directly through it instead of only producing
+specs for a human to apply.
 
+**The bridge only works while the Unreal Editor is running with the plugin
+loaded.** If MCP tool calls to it fail:
+1. Confirm the editor is actually open (`Get-Process UnrealEditor`).
+2. If it was just opened, or the `.uproject`/plugin config just changed,
+   restart the editor so it picks up the change.
+3. If it's still unavailable, fall back to the pre-bridge workflow below —
+   don't block on it.
+
+**Fallback (no live bridge available):**
 - Precise specs a human applies in-editor in minutes.
 - Editor Utility Python scripts, where Unreal's Python API can create/edit
   assets headlessly (works for a meaningful subset of tasks — DataTables,
@@ -179,13 +190,9 @@ actors, drag Blueprint nodes, or paint a Niagara graph (those are binary
   changes, which this environment can write and — if the engine/toolchain
   is available via `Bash` — actually compile and verify.
 
-If you later run this same agent team **on your own computer** with the
-Unreal Editor open (via the Claude desktop app's device bridge, or a
-community Unreal MCP plugin if you set one up), `technical-artist` and
-`level-designer` could be upgraded to act directly in the editor instead of
-producing specs for you to apply. Nothing in this setup requires that to be
-useful today, but it's the natural next step once the vertical slice proves
-the pipeline out.
+Always state plainly which path was used for a given deliverable — "built
+live via the MCP bridge" vs. "spec/script for you to apply" — never imply
+the bridge did something it didn't if it was unavailable for that task.
 
 ## Conventions recap
 - Specs: `docs/specs/<feature-name>.md` (template: `docs/templates/feature-spec-template.md`)

@@ -1,6 +1,6 @@
 # Fate's Elixer
 
-A 4-player PvE co-op extraction game built in Unreal Engine 5.5.4, where alchemy is the progression system — potions aren't just buffs, they're keys that unlock zones, make specific creatures killable, or open new routes. Co-op from day one. Long-term goal: brewing the Elixir of Life.
+A 4-player PvE co-op extraction game built in Unreal Engine 5.8, where alchemy is the progression system — potions aren't just buffs, they're keys that unlock zones, make specific creatures killable, or open new routes. Co-op from day one. Long-term goal: brewing the Elixir of Life.
 
 ## Start here
 
@@ -22,11 +22,12 @@ fateElixer/                 the Unreal Engine project (C++, third-person)
 
 ## Key decisions (see the GDD's decisions log for the full record)
 
-- Engine: Unreal Engine 5.5.4, C++ project, third-person perspective.
+- Engine: Unreal Engine 5.8 (upgraded from 5.5.4 to get Epic's official editor MCP bridge), C++ project, third-person perspective.
 - Co-op from day one — no single-player-first phase.
 - Networking backend: Epic Online Services (EOS), server-authoritative listen-server (peer-hosted, one of the 4 players hosts).
 - Phases run strictly sequentially — only one of the 8 roadmap phases is ever open at a time.
+- Unreal Editor MCP bridge: Epic's official `ModelContextProtocol` plugin, enabled whenever the editor is running.
 
 ## Status
 
-Phase 0 — Networked vertical slice (see [`docs/specs/milestone-0-vertical-slice.md`](claude/elixir-team/docs/specs/milestone-0-vertical-slice.md)). Unreal project scaffolded from the Third Person template; no networking or gameplay systems built yet.
+Phase 0 — Networked vertical slice (see [`docs/specs/milestone-0-vertical-slice.md`](claude/elixir-team/docs/specs/milestone-0-vertical-slice.md)). Interaction system, reagent node, and extraction point implemented and compiling against UE 5.8; EOS session/lobby and the gray-box test level are still outstanding.
