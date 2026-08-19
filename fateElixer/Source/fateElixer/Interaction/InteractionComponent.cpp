@@ -3,6 +3,7 @@
 #include "InteractionComponent.h"
 #include "ElixirInteractable.h"
 #include "../Combat/ElixirDamageable.h"
+#include "../Alchemy/BrewingStation.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "GameFramework/Pawn.h"
@@ -72,9 +73,11 @@ void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	}
 
 	// A Pawn target means reviving a downed teammate (Phase 1), which takes noticeably longer than
-	// gathering a reagent node or triggering extraction.
+	// gathering a reagent node or triggering extraction. A brewing station (Phase 2) uses that
+	// recipe's brew time instead.
 	const bool bTargetIsPawn = CurrentTarget.Get() && CurrentTarget.Get()->IsA<APawn>();
-	const float RequiredHold = bTargetIsPawn ? ReviveHoldDuration : HoldDuration;
+	const bool bTargetIsBrewingStation = CurrentTarget.Get() && CurrentTarget.Get()->IsA<ABrewingStation>();
+	const float RequiredHold = bTargetIsPawn ? ReviveHoldDuration : (bTargetIsBrewingStation ? BrewHoldDuration : HoldDuration);
 
 	HeldTime += DeltaTime;
 	if (HeldTime >= RequiredHold)

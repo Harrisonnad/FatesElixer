@@ -14,6 +14,7 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 class UInteractionComponent;
+class UAlchemyComponent;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -54,6 +55,10 @@ class AfateElixerCharacter : public ACharacter, public IElixirInteractable, publ
 	/** Hold-to-interact component; finds nearby IElixirInteractable actors and resolves interactions on the server */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, meta = (AllowPrivateAccess = "true"))
 	UInteractionComponent* InteractionComponent;
+
+	/** Per-player alchemy state: recipes, Ferment Dust, brewed potions, unlocked tree nodes (Phase 2). */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Alchemy, meta = (AllowPrivateAccess = "true"))
+	UAlchemyComponent* AlchemyComponent;
 
 	/** Melee Attack Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -178,6 +183,17 @@ private:
 	void Debug_AutoSelfDown();
 	void Debug_AutoReviveTeammate();
 
+	/**
+	 * Test-only, Phase 2: -ElixirAutoBrewPotion / -ElixirAutoDrinkPotion. Exercises the brew -> drink
+	 * -> unlock loop end to end (select a known recipe, force-interact the hub's brewing station, then
+	 * drink the result) ahead of a real UMG brewing/tree UI existing -- same rationale as Phase 1's
+	 * melee-attack debug bypass predating real input wiring.
+	 */
+	FTimerHandle Debug_AutoBrewPotionTimer;
+	FTimerHandle Debug_AutoDrinkPotionTimer;
+	void Debug_AutoBrewPotion();
+	void Debug_AutoDrinkPotion();
+
 	/** Bypasses MeleeRange/MeleeCooldown and attacks Target directly, through the real server RPC + damage path. */
 	void Debug_ForceMeleeAttack(AActor* Target) { ServerDebugMeleeAttackTarget(Target); }
 
@@ -195,5 +211,7 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	/** Returns AlchemyComponent subobject **/
+	FORCEINLINE class UAlchemyComponent* GetAlchemyComponent() const { return AlchemyComponent; }
 };
 

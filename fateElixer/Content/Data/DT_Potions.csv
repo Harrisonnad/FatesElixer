@@ -1,0 +1,4 @@
+---,DisplayName,Pathway,SequenceTier,FermentDustCost,BrewTime,UnlocksNodeID
+R_TransmutationSeq9,Ninth Draught of Transmutation,Transmutation,9,4,3.0,N_Transmutation_Seq9
+R_WardingSeq9,Ninth Draught of Warding,Warding,9,4,3.0,N_Warding_Seq9
+R_ExtractionSeq9,Ninth Draught of Extraction,Extraction,9,4,3.0,N_Extraction_Seq9

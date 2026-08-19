@@ -1,0 +1,13 @@
+---,DisplayName,Pathway,SequenceTier,RecipeID,PrerequisiteNodeID
+N_Transmutation_Seq9,Sequence 9 -- Transmutation,Transmutation,9,R_TransmutationSeq9,
+N_Transmutation_Seq6,Sequence 6 -- Transmutation,Transmutation,6,,N_Transmutation_Seq9
+N_Transmutation_Seq3,Sequence 3 -- Transmutation,Transmutation,3,,N_Transmutation_Seq6
+N_Transmutation_Seq0,Sequence 0 -- Transmutation,Transmutation,0,,N_Transmutation_Seq3
+N_Warding_Seq9,Sequence 9 -- Warding,Warding,9,R_WardingSeq9,
+N_Warding_Seq6,Sequence 6 -- Warding,Warding,6,,N_Warding_Seq9
+N_Warding_Seq3,Sequence 3 -- Warding,Warding,3,,N_Warding_Seq6
+N_Warding_Seq0,Sequence 0 -- Warding,Warding,0,,N_Warding_Seq3
+N_Extraction_Seq9,Sequence 9 -- Extraction,Extraction,9,R_ExtractionSeq9,
+N_Extraction_Seq6,Sequence 6 -- Extraction,Extraction,6,,N_Extraction_Seq9
+N_Extraction_Seq3,Sequence 3 -- Extraction,Extraction,3,,N_Extraction_Seq6
+N_Extraction_Seq0,Sequence 0 -- Extraction,Extraction,0,,N_Extraction_Seq3

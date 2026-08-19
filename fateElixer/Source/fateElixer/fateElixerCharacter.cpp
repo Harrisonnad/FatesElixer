@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Interaction/InteractionComponent.h"
+#include "Alchemy/AlchemyComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/EngineTypes.h"
@@ -20,6 +21,7 @@
 #if !UE_BUILD_SHIPPING
 #include "World/ReagentNode.h"
 #include "Creatures/ElixirCreature.h"
+#include "Alchemy/BrewingStation.h"
 #endif
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -66,6 +68,9 @@ AfateElixerCharacter::AfateElixerCharacter()
 
 	// Hold-to-interact for reagent nodes / extraction points (Phase 0) and hub stations / gated creatures (later phases)
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
+
+	// Per-player alchemy state: recipes, reagents, potions, unlocked tree nodes (Phase 2)
+	AlchemyComponent = CreateDefaultSubobject<UAlchemyComponent>(TEXT("AlchemyComponent"));
 
 	CurrentHealth = MaxHealth;
 
@@ -386,6 +391,15 @@ void AfateElixerCharacter::Debug_MaybeScheduleAutoInteract()
 	{
 		GetWorldTimerManager().SetTimer(Debug_AutoReviveTeammateTimer, this, &AfateElixerCharacter::Debug_AutoReviveTeammate, 10.f, false);
 	}
+	if (FParse::Param(FCommandLine::Get(), TEXT("ElixirAutoBrewPotion")))
+	{
+		GetWorldTimerManager().SetTimer(Debug_AutoBrewPotionTimer, this, &AfateElixerCharacter::Debug_AutoBrewPotion, 5.f, false);
+	}
+	if (FParse::Param(FCommandLine::Get(), TEXT("ElixirAutoDrinkPotion")))
+	{
+		// Fires after AutoBrewPotion's 5s so there's actually a potion to drink when this runs.
+		GetWorldTimerManager().SetTimer(Debug_AutoDrinkPotionTimer, this, &AfateElixerCharacter::Debug_AutoDrinkPotion, 7.f, false);
+	}
 }
 
 void AfateElixerCharacter::Debug_AutoInteractReagent()
@@ -432,6 +446,31 @@ void AfateElixerCharacter::Debug_ForceInteractWith(AActor* Target)
 	if (InteractionComponent)
 	{
 		InteractionComponent->Debug_ForceInteract(Target);
+	}
+}
+
+void AfateElixerCharacter::Debug_AutoBrewPotion()
+{
+	// The Sequence 9 Transmutation recipe -- any of the 3 starter recipes would do, this one just
+	// picks arbitrarily. Select then force-interact are both Reliable Server RPCs on the same
+	// connection, so ordering (select lands before the brew attempt reads it) is guaranteed.
+	static const FName RecipeID(TEXT("R_TransmutationSeq9"));
+	if (AlchemyComponent)
+	{
+		AlchemyComponent->ServerSelectRecipe(RecipeID);
+	}
+	if (AActor* Station = UGameplayStatics::GetActorOfClass(GetWorld(), ABrewingStation::StaticClass()))
+	{
+		Debug_ForceInteractWith(Station);
+	}
+}
+
+void AfateElixerCharacter::Debug_AutoDrinkPotion()
+{
+	static const FName RecipeID(TEXT("R_TransmutationSeq9"));
+	if (AlchemyComponent)
+	{
+		AlchemyComponent->ServerDrinkPotion(RecipeID);
 	}
 }
 

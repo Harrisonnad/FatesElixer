@@ -40,6 +40,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	float ReviveHoldDuration = 3.f;
 
+	/**
+	 * Hold duration used instead of HoldDuration when the target is a brewing station (Phase 2) --
+	 * represents that recipe's brew time, the same way ReviveHoldDuration represents revive time.
+	 */
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	float BrewHoldDuration = 3.f;
+
 	/** Call from the owning pawn's SetupPlayerInputComponent. */
 	void BindInput(UInputComponent* PlayerInputComponent, UInputAction* InteractAction);
 
