@@ -76,6 +76,35 @@ Not a lab. A place chosen for meaning rather than utility, which tells you they 
 
 ---
 
+## The Sequence system and why it counts down
+
+**Decision (2026-08-18):** the alchemy tree's three pathways (see `01-systems-spec.md`) are framed
+as a spin on *Lord of the Mysteries*' Sequence potions — each pathway is climbed by finding,
+brewing, and drinking sequence potions, ranked **9 (entry) down to 0 (height of power)**.
+
+Counting down instead of up isn't just borrowed flavor — it's the same shape as this game's own
+central horror. The Concord didn't fail by dying; they failed by continuing past the point where
+continuing still meant staying themselves. Sequence 0 is the same edge, mechanically legible: the
+closer a pathway gets to 0, the closer that character's fiction sits to what the Concord became —
+still recognizable, still moving, further from where they started. A player chasing Sequence 0
+should feel that weight the same way finding a Concord member's remains does. Power and cost rise
+together, on the same axis, which is the whole point of the premise.
+
+This doesn't require new content types — recipe fragments already are sequence-potion formulae in
+everything but name. The Sequence framing gives the existing discovery loop (find fragments →
+reconstruct recipe → brew → drink → unlock) a name and a number, not a new mechanic.
+
+## The Elixir of Fate
+
+The Concord called their completed work **the Elixir of Life** — that name belongs to them, found
+in their own notes, and should stay attached to their attempt specifically. What the player
+ultimately builds — whether by following the Concord's procedure exactly, altering it, or
+assembling the fragments and choosing not to complete it — is **the Elixir of Fate**: not a copy of
+their result, but the sum of the choices (the *fate*) that got a specific team there. The distinct
+name marks that this playthrough's ending is the player's own reckoning with the same choice the
+Concord already made once, not a reenactment. It's also, not coincidentally, the game's own title
+resolving into an in-fiction object — the thing this game is ultimately about building.
+
 ## The ending question
 
 You have the recipe. You have the reagents. The Concord followed this exact procedure and it worked — that's the horrifying part. It worked.

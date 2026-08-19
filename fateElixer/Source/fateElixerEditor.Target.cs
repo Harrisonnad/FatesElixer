@@ -11,5 +11,6 @@ public class fateElixerEditorTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V7;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_8;
 		ExtraModuleNames.Add("fateElixer");
+		ExtraModuleNames.Add("fateElixerEditorTools");
 	}
 }

@@ -55,6 +55,8 @@ void AReagentNode::OnInteract_Implementation(APawn* Interactor)
 
 void AReagentNode::OnRep_Gathered()
 {
+	// Observable proof, on every connected process, that the server-authoritative gather state replicated.
+	UE_LOG(LogTemp, Warning, TEXT("[Elixir] ReagentNode %s gathered=%d (replicated)"), *GetName(), bGathered);
 	SetGatheredVisuals(bGathered);
 }
 

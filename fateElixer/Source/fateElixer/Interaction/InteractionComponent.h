@@ -32,8 +32,26 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	float HoldDuration = 1.f;
 
+	/**
+	 * Hold duration used instead of HoldDuration when the target is a Pawn (Phase 1: reviving a downed
+	 * teammate) rather than a world interactable like a reagent node -- reviving is meant to take
+	 * noticeably longer than gathering.
+	 */
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	float ReviveHoldDuration = 3.f;
+
 	/** Call from the owning pawn's SetupPlayerInputComponent. */
 	void BindInput(UInputComponent* PlayerInputComponent, UInputAction* InteractAction);
+
+#if !UE_BUILD_SHIPPING
+	/**
+	 * Test-only hook driving the exact same Server RPC a real hold-to-interact input would, without
+	 * needing simulated player input. Used by the headless multi-process replication test harness
+	 * (Tests/ReplicationHarness/) to prove interaction state replicates correctly across real
+	 * client-server connections, not just in-process logic.
+	 */
+	void Debug_ForceInteract(AActor* Target) { ServerTryInteract(Target); }
+#endif
 
 protected:
 	virtual void BeginPlay() override;

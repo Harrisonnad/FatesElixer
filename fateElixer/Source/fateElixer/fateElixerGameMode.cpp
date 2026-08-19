@@ -4,6 +4,10 @@
 #include "fateElixerCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
+#if !UE_BUILD_SHIPPING
+#include "Creatures/ElixirCreature.h"
+#endif
+
 AfateElixerGameMode::AfateElixerGameMode()
 {
 	// set default pawn class to our Blueprinted character
@@ -13,3 +17,15 @@ AfateElixerGameMode::AfateElixerGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 }
+
+#if !UE_BUILD_SHIPPING
+void AfateElixerGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (FParse::Param(FCommandLine::Get(), TEXT("ElixirSpawnTestCreature")))
+	{
+		GetWorld()->SpawnActor<AElixirCreature>(FVector(300.f, 0.f, 100.f), FRotator::ZeroRotator);
+	}
+}
+#endif
