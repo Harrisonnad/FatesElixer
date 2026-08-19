@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "Interaction/InteractionComponent.h"
 #include "Alchemy/AlchemyComponent.h"
+#include "Alchemy/AlchemyHubWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/EngineTypes.h"
@@ -100,6 +101,17 @@ void AfateElixerCharacter::NotifyControllerChanged()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+
+		// Gray-box hub UI (Phase 2): always on screen for the locally controlled player -- no toggle
+		// input exists yet this phase, and it's small/non-intrusive enough not to need one.
+		if (PlayerController->IsLocalController() && !HubWidgetInstance)
+		{
+			HubWidgetInstance = CreateWidget<UAlchemyHubWidget>(PlayerController, UAlchemyHubWidget::StaticClass());
+			if (HubWidgetInstance)
+			{
+				HubWidgetInstance->AddToViewport();
+			}
 		}
 	}
 

@@ -15,6 +15,7 @@ class UInputMappingContext;
 class UInputAction;
 class UInteractionComponent;
 class UAlchemyComponent;
+class UAlchemyHubWidget;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -141,6 +142,10 @@ private:
 
 	/** Server-only; started on EnterDownedState, cancelled on Revive. */
 	FTimerHandle DownedTimerHandle;
+
+	/** Gray-box hub UI (Phase 2), created once for the locally controlled player in NotifyControllerChanged. */
+	UPROPERTY()
+	UAlchemyHubWidget* HubWidgetInstance;
 
 	// UFUNCTION Server RPCs must be declared unconditionally (UHT rejects UFUNCTION inside
 	// #if !UE_BUILD_SHIPPING) -- only the plain calling wrappers below are test-only-guarded.

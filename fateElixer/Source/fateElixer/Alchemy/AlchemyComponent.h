@@ -7,6 +7,11 @@
 #include "ElixirAlchemyTypes.h"
 #include "AlchemyComponent.generated.h"
 
+/** Fired after FermentDust/KnownRecipeIDs/UnlockedNodeIDs/PotionInventory change, both on replication
+ * (clients) and via an explicit local call from the mutating functions (the listen-server host's own
+ * view, which never receives its own OnRep) -- lets the hub UI refresh without polling. */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAlchemyStateChanged);
+
 /**
  * Per-player alchemy state: known recipes, Ferment Dust stock, brewed potion inventory, and
  * unlocked tree nodes. Added to AfateElixerCharacter. Server-authoritative, mirroring the
@@ -44,6 +49,9 @@ public:
 	 * this phase only ever needs "do I have at least one of RecipeID", so a flat array is simplest. */
 	UPROPERTY(ReplicatedUsing = OnRep_AlchemyState, VisibleAnywhere, BlueprintReadOnly, Category = "Alchemy")
 	TArray<FName> PotionInventory;
+
+	UPROPERTY(BlueprintAssignable, Category = "Alchemy")
+	FOnAlchemyStateChanged OnAlchemyStateChanged;
 
 	/** UI calls this when the player picks a recipe in the brewing panel, before holding Interact at the station. */
 	UFUNCTION(BlueprintCallable, Server, Reliable, Category = "Alchemy")

@@ -32,8 +32,7 @@ void UAlchemyComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 void UAlchemyComponent::OnRep_AlchemyState()
 {
-	// Client-side hook point for the hub UI to refresh -- no logic needed here yet; the widget reads
-	// the replicated properties directly (BlueprintReadOnly) rather than binding to this event.
+	OnAlchemyStateChanged.Broadcast();
 }
 
 void UAlchemyComponent::EnsureLoaded()
@@ -137,6 +136,7 @@ bool UAlchemyComponent::TryBrewSelectedRecipe()
 
 	UE_LOG(LogTemp, Warning, TEXT("[Elixir] %s brewed %s -- FermentDust=%d, PotionInventory.Num=%d"),
 		*GetNameSafe(GetOwner()), *SelectedRecipeID.ToString(), FermentDust, PotionInventory.Num());
+	OnRep_AlchemyState(); // OnRep isn't called locally on the server -- call it explicitly for the host's own view.
 	return true;
 }
 
@@ -164,4 +164,5 @@ void UAlchemyComponent::ServerDrinkPotion_Implementation(FName RecipeID)
 
 	UE_LOG(LogTemp, Warning, TEXT("[Elixir] %s drank %s -- UnlockedNodeIDs.Num=%d (contains %s: %d)"),
 		*GetNameSafe(GetOwner()), *RecipeID.ToString(), UnlockedNodeIDs.Num(), *Recipe->UnlocksNodeID.ToString(), UnlockedNodeIDs.Contains(Recipe->UnlocksNodeID));
+	OnRep_AlchemyState(); // OnRep isn't called locally on the server -- call it explicitly for the host's own view.
 }
