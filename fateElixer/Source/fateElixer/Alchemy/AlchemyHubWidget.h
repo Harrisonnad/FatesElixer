@@ -7,6 +7,8 @@
 #include "AlchemyHubWidget.generated.h"
 
 class UAlchemyComponent;
+class UInteractionComponent;
+class AfateElixerCharacter;
 class UVerticalBox;
 class UTextBlock;
 class UButton;
@@ -29,13 +31,23 @@ class UAlchemyHubWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 
 protected:
 	UPROPERTY()
 	TObjectPtr<UAlchemyComponent> BoundAlchemy;
 
 	UPROPERTY()
+	TObjectPtr<AfateElixerCharacter> OwningCharacter;
+
+	UPROPERTY()
 	TObjectPtr<UTextBlock> FermentDustText;
+
+	/** Live "Brewing... NN%" feedback while holding Interact at a brewing station -- updated in
+	 * NativeTick from InteractionComponent's local hold state (polled, not event-driven -- the hold
+	 * itself is a purely client-local input state, not replicated). */
+	UPROPERTY()
+	TObjectPtr<UTextBlock> BrewProgressText;
 
 	UPROPERTY()
 	TObjectPtr<UButton> RecipeButtons[3];

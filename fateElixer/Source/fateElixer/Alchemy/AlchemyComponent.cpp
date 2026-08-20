@@ -32,6 +32,18 @@ void UAlchemyComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 void UAlchemyComponent::OnRep_AlchemyState()
 {
+	// FermentDust/KnownRecipeIDs/UnlockedNodeIDs/PotionInventory share this OnRep, so a mutation that
+	// touches several of them at once would otherwise fire this multiple times in the same frame.
+	if (GFrameCounter == LastAlchemyStateBroadcastFrame)
+	{
+		return;
+	}
+	LastAlchemyStateBroadcastFrame = GFrameCounter;
+
+	// Observable proof, on the owning process, that server-authoritative alchemy state replicated --
+	// same "log on OnRep" pattern as AfateElixerCharacter::OnRep_CurrentHealth/OnRep_Downed.
+	UE_LOG(LogTemp, Warning, TEXT("[Elixir] %s alchemy state (replicated): FermentDust=%d, KnownRecipeIDs=%d, PotionInventory=%d, UnlockedNodeIDs=%d"),
+		*GetNameSafe(GetOwner()), FermentDust, KnownRecipeIDs.Num(), PotionInventory.Num(), UnlockedNodeIDs.Num());
 	OnAlchemyStateChanged.Broadcast();
 }
 

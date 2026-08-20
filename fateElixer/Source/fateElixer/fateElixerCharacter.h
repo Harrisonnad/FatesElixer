@@ -199,6 +199,11 @@ private:
 	void Debug_AutoBrewPotion();
 	void Debug_AutoDrinkPotion();
 
+	/** Test-only, Phase 2 polish: -ElixirAutoTravel. Force-interacts with any ATravelPoint in the
+	 * current level, verifying the hub<->zone server travel actually fires. */
+	FTimerHandle Debug_AutoTravelTimer;
+	void Debug_AutoTravel();
+
 	/** Bypasses MeleeRange/MeleeCooldown and attacks Target directly, through the real server RPC + damage path. */
 	void Debug_ForceMeleeAttack(AActor* Target) { ServerDebugMeleeAttackTarget(Target); }
 
@@ -218,5 +223,7 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	/** Returns AlchemyComponent subobject **/
 	FORCEINLINE class UAlchemyComponent* GetAlchemyComponent() const { return AlchemyComponent; }
+	/** Returns InteractionComponent subobject **/
+	FORCEINLINE class UInteractionComponent* GetInteractionComponent() const { return InteractionComponent; }
 };
 

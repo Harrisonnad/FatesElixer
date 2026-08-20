@@ -91,6 +91,11 @@ private:
 
 	bool bLoaded = false;
 
+	/** FermentDust/KnownRecipeIDs/UnlockedNodeIDs/PotionInventory all share OnRep_AlchemyState, so a
+	 * single mutation that changes several of them lands as several separate OnRep calls in the same
+	 * frame -- debounced here so the UI only refreshes once per actual state change. */
+	uint64 LastAlchemyStateBroadcastFrame = TNumericLimits<uint64>::Max();
+
 	/** Lazily loads on first server-side alchemy action rather than BeginPlay, since a networked
 	 * client's PlayerState (which MakeSaveSlotName depends on) isn't guaranteed valid that early --
 	 * the same possession-timing risk already documented on AfateElixerCharacter's debug-interact hook. */

@@ -2,8 +2,10 @@
 
 #include "AlchemyHubWidget.h"
 #include "AlchemyComponent.h"
+#include "BrewingStation.h"
 #include "ElixirAlchemyTypes.h"
 #include "../fateElixerCharacter.h"
+#include "../Interaction/InteractionComponent.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/VerticalBox.h"
 #include "Components/Button.h"
@@ -17,15 +19,41 @@ void UAlchemyHubWidget::NativeConstruct()
 
 	BuildLayout();
 
-	if (AfateElixerCharacter* Character = Cast<AfateElixerCharacter>(GetOwningPlayerPawn()))
+	OwningCharacter = Cast<AfateElixerCharacter>(GetOwningPlayerPawn());
+	if (OwningCharacter)
 	{
-		BoundAlchemy = Character->GetAlchemyComponent();
+		BoundAlchemy = OwningCharacter->GetAlchemyComponent();
 	}
 	if (BoundAlchemy)
 	{
 		BoundAlchemy->OnAlchemyStateChanged.AddDynamic(this, &UAlchemyHubWidget::RefreshFromAlchemy);
 	}
 	RefreshFromAlchemy();
+}
+
+void UAlchemyHubWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
+{
+	Super::NativeTick(MyGeometry, DeltaTime);
+
+	if (!BrewProgressText)
+	{
+		return;
+	}
+
+	// The hold itself is purely local input state (InteractionComponent never replicates it), so this
+	// has to be polled every tick rather than driven by AlchemyComponent's OnAlchemyStateChanged.
+	UInteractionComponent* Interaction = OwningCharacter ? OwningCharacter->GetInteractionComponent() : nullptr;
+	AActor* HoldTarget = Interaction ? Interaction->GetCurrentHoldTarget() : nullptr;
+	if (HoldTarget && HoldTarget->IsA<ABrewingStation>())
+	{
+		const int32 Percent = FMath::RoundToInt(Interaction->GetCurrentHoldProgress() * 100.f);
+		BrewProgressText->SetText(FText::Format(NSLOCTEXT("Alchemy", "Brewing", "Brewing... {0}%"), FText::AsNumber(Percent)));
+		BrewProgressText->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		BrewProgressText->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void UAlchemyHubWidget::NativeDestruct()
@@ -44,6 +72,10 @@ void UAlchemyHubWidget::BuildLayout()
 
 	FermentDustText = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(), TEXT("FermentDustText"));
 	RootBox->AddChild(FermentDustText);
+
+	BrewProgressText = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(), TEXT("BrewProgressText"));
+	BrewProgressText->SetVisibility(ESlateVisibility::Collapsed);
+	RootBox->AddChild(BrewProgressText);
 
 	for (int32 SlotIndex = 0; SlotIndex < 3; ++SlotIndex)
 	{
@@ -95,7 +127,22 @@ void UAlchemyHubWidget::RefreshFromAlchemy()
 		}
 
 		const FName RecipeID = BoundAlchemy->KnownRecipeIDs[SlotIndex];
-		RecipeButtonLabels[SlotIndex]->SetText(FText::Format(NSLOCTEXT("Alchemy", "SelectRecipe", "Select: {0}"), FText::FromName(RecipeID)));
+		const FElixirPotionRecipe* Recipe = BoundAlchemy->PotionRecipeTable
+			? BoundAlchemy->PotionRecipeTable->FindRow<FElixirPotionRecipe>(RecipeID, TEXT("UAlchemyHubWidget::RefreshFromAlchemy"))
+			: nullptr;
+		if (Recipe)
+		{
+			const bool bAffordable = BoundAlchemy->FermentDust >= Recipe->FermentDustCost;
+			RecipeButtonLabels[SlotIndex]->SetText(FText::Format(
+				NSLOCTEXT("Alchemy", "SelectRecipe", "Select: {0} ({1} Ferment Dust){2}"),
+				FText::FromName(RecipeID),
+				FText::AsNumber(Recipe->FermentDustCost),
+				bAffordable ? FText::GetEmpty() : NSLOCTEXT("Alchemy", "CantAfford", " -- can't afford")));
+		}
+		else
+		{
+			RecipeButtonLabels[SlotIndex]->SetText(FText::Format(NSLOCTEXT("Alchemy", "SelectRecipe", "Select: {0}"), FText::FromName(RecipeID)));
+		}
 
 		if (BoundAlchemy->PotionInventory.Contains(RecipeID))
 		{

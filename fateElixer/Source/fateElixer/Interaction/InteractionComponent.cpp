@@ -72,12 +72,7 @@ void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 		return;
 	}
 
-	// A Pawn target means reviving a downed teammate (Phase 1), which takes noticeably longer than
-	// gathering a reagent node or triggering extraction. A brewing station (Phase 2) uses that
-	// recipe's brew time instead.
-	const bool bTargetIsPawn = CurrentTarget.Get() && CurrentTarget.Get()->IsA<APawn>();
-	const bool bTargetIsBrewingStation = CurrentTarget.Get() && CurrentTarget.Get()->IsA<ABrewingStation>();
-	const float RequiredHold = bTargetIsPawn ? ReviveHoldDuration : (bTargetIsBrewingStation ? BrewHoldDuration : HoldDuration);
+	const float RequiredHold = GetRequiredHoldDuration(CurrentTarget.Get());
 
 	HeldTime += DeltaTime;
 	if (HeldTime >= RequiredHold)
@@ -87,6 +82,32 @@ void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 		HeldTime = 0.f;
 		CurrentTarget = nullptr;
 	}
+}
+
+float UInteractionComponent::GetRequiredHoldDuration(AActor* Target) const
+{
+	// A Pawn target means reviving a downed teammate (Phase 1), which takes noticeably longer than
+	// gathering a reagent node or triggering extraction. A brewing station (Phase 2) uses that
+	// recipe's brew time instead.
+	if (Target && Target->IsA<APawn>())
+	{
+		return ReviveHoldDuration;
+	}
+	if (Target && Target->IsA<ABrewingStation>())
+	{
+		return BrewHoldDuration;
+	}
+	return HoldDuration;
+}
+
+float UInteractionComponent::GetCurrentHoldProgress() const
+{
+	if (!bHoldingInteract || !CurrentTarget.IsValid())
+	{
+		return 0.f;
+	}
+	const float Required = GetRequiredHoldDuration(CurrentTarget.Get());
+	return Required > 0.f ? FMath::Clamp(HeldTime / Required, 0.f, 1.f) : 0.f;
 }
 
 AActor* UInteractionComponent::FindBestInteractable() const

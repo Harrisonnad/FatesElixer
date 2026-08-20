@@ -50,6 +50,12 @@ public:
 	/** Call from the owning pawn's SetupPlayerInputComponent. */
 	void BindInput(UInputComponent* PlayerInputComponent, UInputAction* InteractAction);
 
+	/** UI-only: the actor currently being held-interacted with, or null if not holding. */
+	AActor* GetCurrentHoldTarget() const { return bHoldingInteract ? CurrentTarget.Get() : nullptr; }
+
+	/** UI-only: 0 if not holding, else progress (0..1) toward the current target's required hold duration. */
+	float GetCurrentHoldProgress() const;
+
 #if !UE_BUILD_SHIPPING
 	/**
 	 * Test-only hook driving the exact same Server RPC a real hold-to-interact input would, without
@@ -72,6 +78,10 @@ private:
 	void ServerTryInteract(AActor* Target);
 
 	AActor* FindBestInteractable() const;
+
+	/** Shared by TickComponent and GetCurrentHoldProgress -- Pawn targets (revive) and brewing
+	 * stations (brew) use their own hold duration instead of the default HoldDuration. */
+	float GetRequiredHoldDuration(AActor* Target) const;
 
 	bool bHoldingInteract = false;
 	float HeldTime = 0.f;

@@ -21,6 +21,7 @@
 
 #if !UE_BUILD_SHIPPING
 #include "World/ReagentNode.h"
+#include "World/TravelPoint.h"
 #include "Creatures/ElixirCreature.h"
 #include "Alchemy/BrewingStation.h"
 #endif
@@ -412,6 +413,10 @@ void AfateElixerCharacter::Debug_MaybeScheduleAutoInteract()
 		// Fires after AutoBrewPotion's 5s so there's actually a potion to drink when this runs.
 		GetWorldTimerManager().SetTimer(Debug_AutoDrinkPotionTimer, this, &AfateElixerCharacter::Debug_AutoDrinkPotion, 7.f, false);
 	}
+	if (FParse::Param(FCommandLine::Get(), TEXT("ElixirAutoTravel")))
+	{
+		GetWorldTimerManager().SetTimer(Debug_AutoTravelTimer, this, &AfateElixerCharacter::Debug_AutoTravel, 5.f, false);
+	}
 }
 
 void AfateElixerCharacter::Debug_AutoInteractReagent()
@@ -483,6 +488,14 @@ void AfateElixerCharacter::Debug_AutoDrinkPotion()
 	if (AlchemyComponent)
 	{
 		AlchemyComponent->ServerDrinkPotion(RecipeID);
+	}
+}
+
+void AfateElixerCharacter::Debug_AutoTravel()
+{
+	if (AActor* Travel = UGameplayStatics::GetActorOfClass(GetWorld(), ATravelPoint::StaticClass()))
+	{
+		Debug_ForceInteractWith(Travel);
 	}
 }
 
